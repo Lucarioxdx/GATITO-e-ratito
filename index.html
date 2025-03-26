@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Game</title>
+    
+    <style>
+        body {
+            text-align: center;
+            background-color: whitesmoke;
+        }
+
+        #game-container {
+            position: relative;
+            height: 500px;
+            width: 500px;
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+            margin: auto;
+            border: 5px solid purple;
+            overflow: hidden;
+        }
+
+        .character {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            transition: transform 0.1s linear;
+        }
+
+        #player {
+            background: url('ratu.png') no-repeat center;
+            background-size: cover;
+        }
+
+        #enemy {
+            background: url('gatu.png') no-repeat center;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐈 Fuja do Gatito! 🐀</h1>  
+    <p>Use as setas do teclado escapar!</p>
+
+    <div id="game-container">
+        <div id="player" class="character"></div>
+        <div id="enemy" class="character"></div>
+    </div>
+
+    <script>
+        const player = document.getElementById ("player")
+        const enemy = document.getElementById ("enemy")
+        const gamecontainer = document.getElementById ("game-container")
+
+        let playerx = 300
+        let playery = 300
+
+        let enemyx = 50
+        let enemyy = 50
+
+        let playerspeed = 4
+        let enemyspeed = 30
+
+        let keys = {ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false}
+
+
+        document.addEventListener ("keydown", (e) => {
+            if (keys.hasOwnProperty (e.key)) {
+                keys [e.key] = true
+            }
+        })
+
+        document.addEventListener ("keyup", (e) => {
+            if (keys.hasOwnProperty (e.key)) {
+                keys [e.key] = false
+            }
+        })
+
+
+        function moveplayer () {
+            if (keys.ArrowUp && playery > 0) playery -= playerspeed
+            if (keys.ArrowDown && playery < 450) playery += playerspeed
+            if (keys.ArrowLeft && playerx > 0) playerx -= playerspeed
+            if (keys.ArrowRight && playerx < 450) playerx += playerspeed
+
+            player.style.transform = `translate(${playerx}px, ${playery}px)`
+        }
+        
+        function moveenemy () {
+            let direction = Math.floor (Math.random () * 4)
+            switch (direction) {
+                case 0 : if (enemyy > 0) enemyy -= enemyspeed; break;
+                case 1 : if (enemyy < 450) enemyy += enemyspeed; break;
+
+                case 2 : if (enemyx > 0) enemyx -= enemyspeed; break;
+                case 3 : if (enemyx < 450) enemyx += enemyspeed; break;
+            }
+            enemy.style.transform = `translate(${enemyx}px, ${enemyy}px)`;
+        }
+
+        function checkcollision () {
+            if (Math.abs(playerx - enemyx)<40 && Math.abs(playery - enemyy)<40) {
+                alert ("Ratito Ratito, cozido! 🐈");
+                resetgame ();
+            }
+        }
+
+        function resetgame () {
+            playerx = 300
+            playery = 300
+            
+            enemyx = 50
+            enemyy = 50
+
+            updategame ();
+        }
+
+
+        function updategame () {
+            moveplayer ();
+            moveenemy ();
+            checkcollision ();
+            requestAnimationFrame (updategame);
+        }
+
+        updategame ();
+    </script>
+</body>
+</html>
